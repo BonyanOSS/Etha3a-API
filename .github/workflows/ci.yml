@@ -1,0 +1,41 @@
+name: CI Check
+
+on:
+    pull_request:
+        branches: [main]
+
+jobs:
+    ci:
+        name: Lint, Build & Test
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install pnpm
+              run: npm install -g pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Run ESLint
+              run: pnpm lint
+
+            - name: Run TypeScript build
+              run: pnpm build
+
+            - name: Run Vitest tests with coverage
+              run: pnpm test --coverage
+
+            - name: Upload coverage report
+              uses: actions/upload-artifact@v3
+              with:
+                  name: coverage-report
+                  path: coverage

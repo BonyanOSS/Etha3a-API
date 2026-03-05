@@ -8,7 +8,9 @@
         "dev": "tsx src/server.ts",
         "build": "tsc",
         "start": "node dist/server.js",
-        "lint": "eslint src --fix"
+        "lint": "eslint src tests --fix",
+        "test": "vitest run",
+        "test:watch": "vitest"
     },
     "keywords": [
         "quran",
@@ -23,20 +25,24 @@
     "packageManager": "pnpm@10.30.3",
     "dependencies": {
         "dotenv": "^17.3.1",
-        "fastify": "^5.7.4"
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-simple-header": "^1.2.2",
+        "fastify": "^5.7.4",
+        "ts-node": "^10.9.2",
+        "typescript-eslint": "^8.56.1"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/node": "^25.3.3",
+        "@types/supertest": "^7.2.0",
         "@typescript-eslint/eslint-plugin": "^8.56.1",
         "@typescript-eslint/parser": "^8.56.1",
         "eslint": ">=10",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.5",
-        "eslint-plugin-simple-header": "^1.2.2",
         "prettier": "^3.8.1",
+        "supertest": "^7.2.2",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.56.1"
+        "vitest": "^4.0.18"
     }
 }

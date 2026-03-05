@@ -34,4 +34,13 @@ export default [
             ],
         },
     },
+    {
+        files: ['tests/**/*.ts', 'vitest.config.ts'],
+        languageOptions: {
+            parser: tseslint.parser,
+            parserOptions: {
+                project: null,
+            },
+        },
+    },
 ];
