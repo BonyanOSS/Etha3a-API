@@ -4,15 +4,23 @@
  * MIT License
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import Fastify from 'fastify';
-import radioRoutes from '../src/modules/reciters/reciters.route';
+import recitersRoutes from '../src/modules/reciters/reciters.route';
 
 describe('GET /reciters', () => {
     const app = Fastify();
-    app.register(radioRoutes);
 
-    it('should return radio list', async () => {
+    beforeAll(async () => {
+        await app.register(recitersRoutes);
+        await app.ready();
+    });
+
+    afterAll(async () => {
+        await app.close();
+    });
+
+    it('should return reciters list', async () => {
         const res = await app.inject({
             method: 'GET',
             url: '/reciters',
@@ -21,5 +29,45 @@ describe('GET /reciters', () => {
         expect(res.statusCode).toBe(200);
         const body = res.json();
         expect(body.data).toBeDefined();
+    });
+
+    it('should return reciter by id', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/reciters/1',
+        });
+
+        expect(res.statusCode).toBe(200);
+        const body = res.json();
+        expect(body.data).toBeDefined();
+    });
+
+    it('should return 404 for non-existing reciter', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/reciters/999',
+        });
+
+        expect(res.statusCode).toBe(404);
+    });
+
+    it('should return surah audio for existing reciter and surah', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/reciters/1/surah/1',
+        });
+
+        expect(res.statusCode).toBe(200);
+        const body = res.json();
+        expect(body.data).toBeDefined();
+    });
+
+    it('should return 400 for non-existing surah', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/reciters/1/surah/999',
+        });
+
+        expect(res.statusCode).toBe(400);
     });
 });

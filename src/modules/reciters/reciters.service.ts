@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { ApiFunction, Mp3QuranResponse } from '@/src/types/Api.js';
+import type { ApiFunction, Mp3QuranRecitersResponse } from '@/src/types/Api.js';
 
 export interface ReciterItem {
     id: number;
@@ -16,7 +16,7 @@ export interface ReciterItem {
         name: string;
         server: string;
     }[];
-    apiName: 'mp3quran.net' | 'alquran.cloud';
+    apiName: 'mp3quran.net';
 }
 
 export const reciterApis: ApiFunction<ReciterItem>[] = [
@@ -24,7 +24,7 @@ export const reciterApis: ApiFunction<ReciterItem>[] = [
         const res = await fetch('https://www.mp3quran.net/api/v3/reciters');
         if (!res.ok) throw new Error('API mp3quran.net failed');
 
-        const json = (await res.json()) as Mp3QuranResponse;
+        const json = (await res.json()) as Mp3QuranRecitersResponse;
 
         return json.reciters.map((s) => ({
             id: s.id,

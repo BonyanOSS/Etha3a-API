@@ -85,9 +85,11 @@ export async function getReciterSurah(req: FastifyRequest<{ Params: { id: string
     const audio = `${moshafItem.server}${surah}.mp3`;
 
     return reply.send({
-        success: true,
-        reciter: reciter.name,
-        surah: surahNum,
-        audio,
+        data: {
+            success: true,
+            reciter: reciter.name,
+            surah: surahNum,
+            audio,
+        },
     });
 }
