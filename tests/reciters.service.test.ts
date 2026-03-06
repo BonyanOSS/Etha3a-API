@@ -36,8 +36,8 @@ describe('Reciters Service', () => {
             json: async () => mockData,
         } as Response);
 
-        const result: { quran: ReciterItem[] } = await getRadioContent();
-        expect(result.quran[0].name).toBe('Test');
-        expect(result.quran[0].id).toBe(1);
+        const result: { reciters: ReciterItem[] } = await getRadioContent();
+        expect(result.reciters[0].name).toBe('Test');
+        expect(result.reciters[0].id).toBe(1);
     });
 });

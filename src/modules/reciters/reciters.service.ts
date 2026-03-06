@@ -56,7 +56,7 @@ export async function fetchWithFallback<T>(apis: ApiFunction<T>[]): Promise<T[]>
     return [];
 }
 
-export async function getRadioContent(): Promise<{ quran: ReciterItem[] }> {
-    const quran = await fetchWithFallback(reciterApis);
-    return { quran };
+export async function getRadioContent(): Promise<{ reciters: ReciterItem[] }> {
+    const reciters = await fetchWithFallback(reciterApis);
+    return { reciters };
 }
