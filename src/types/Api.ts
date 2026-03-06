@@ -6,17 +6,45 @@
 
 export type ApiFunction<T> = () => Promise<T[]>;
 
-export interface Mp3QuranReciters {
+/* ------------------ Reciters ------------------ */
+
+export interface Mp3QuranMoshaf {
+    id: number;
+    name: string;
+    server: string;
+}
+
+export interface Mp3QuranReciter {
     id: number;
     name: string;
     date: string;
-    moshaf: {
-        id: number;
-        name: string;
-        server: string;
-    }[];
+    moshaf: Mp3QuranMoshaf[];
 }
 
-export interface Mp3QuranResponse {
-    reciters: Mp3QuranReciters[];
+export interface Mp3QuranRecitersResponse {
+    reciters: Mp3QuranReciter[];
+}
+
+/* ------------------ Mp3Quran Surah ------------------ */
+
+export interface Mp3QuranSurah {
+    id: number;
+    name: string;
+    makkia: number;
+}
+
+export interface Mp3QuranSurahResponse {
+    suwar: Mp3QuranSurah[];
+}
+
+/* ------------------ AlQuran API ------------------ */
+
+export interface AlQuranSurah {
+    id: number;
+    name: string;
+    revelationType: string;
+}
+
+export interface AlQuranSurahResponse {
+    data: AlQuranSurah[];
 }
