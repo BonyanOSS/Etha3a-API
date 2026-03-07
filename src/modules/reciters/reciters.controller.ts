@@ -94,23 +94,18 @@ export async function getReciterSurah(req: FastifyRequest<{ Params: { id: string
     });
 }
 
-export async function getReciterByName(
-    req: FastifyRequest<{ Params: { name: string } }>,
-    reply: FastifyReply
-) {
+export async function getReciterByName(req: FastifyRequest<{ Params: { name: string } }>, reply: FastifyReply) {
     const name = req.params.name;
     const data = await getRadioContent();
 
     const search = name.toLowerCase();
 
-    const reciterData = data.reciters.find((r) =>
-        r.name.toLowerCase().includes(search)
-    );
+    const reciterData = data.reciters.find((r) => r.name.toLowerCase().includes(search));
 
     if (!reciterData) {
         return reply.status(404).send({
             success: false,
-            message: "Reciter not found",
+            message: 'Reciter not found',
         });
     }
 
