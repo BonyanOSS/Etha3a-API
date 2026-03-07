@@ -12,7 +12,7 @@ export default async function radioRoutes(fastify: FastifyInstance) {
 
     fastify.get('/reciters/:id', getReciterById);
 
-    fastify.get('/reciters/search/:name', getReciterByName);
+    fastify.get('/reciters/search', getReciterByName);
 
     fastify.get('/reciters/:id/surah/:surah', getReciterSurah);
 }

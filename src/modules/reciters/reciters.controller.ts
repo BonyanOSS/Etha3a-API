@@ -6,6 +6,7 @@
 
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getRadioContent } from './reciters.service.js';
+import { normalizeArabic } from '../../utils/arabic.js';
 
 export async function getRadio(req: FastifyRequest, reply: FastifyReply) {
     try {
@@ -94,23 +95,18 @@ export async function getReciterSurah(req: FastifyRequest<{ Params: { id: string
     });
 }
 
-export async function getReciterByName(
-    req: FastifyRequest<{ Params: { name: string } }>,
-    reply: FastifyReply
-) {
-    const name = req.params.name;
+export async function getReciterByName(req: FastifyRequest<{ Querystring: { name: string } }>, reply: FastifyReply) {
+    const name = req.query.name;
     const data = await getRadioContent();
 
-    const search = name.toLowerCase();
+    const search = normalizeArabic(name);
 
-    const reciterData = data.reciters.find((r) =>
-        r.name.toLowerCase().includes(search)
-    );
+    const reciterData = data.reciters.find((r) => normalizeArabic(r.name).includes(search));
 
     if (!reciterData) {
         return reply.status(404).send({
             success: false,
-            message: "Reciter not found",
+            message: 'Reciter not found',
         });
     }
 

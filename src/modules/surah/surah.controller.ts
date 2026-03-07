@@ -6,6 +6,7 @@
 
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getSurahContent } from './surah.service.js';
+import { normalizeArabic } from '../../utils/arabic.js';
 
 export async function getSurah(req: FastifyRequest, reply: FastifyReply) {
     try {
@@ -42,4 +43,25 @@ export async function getSurahById(req: FastifyRequest<{ Params: { id: string } 
             message: (err as Error).message || 'No APIs available',
         });
     }
+}
+
+export async function getReciterByName(req: FastifyRequest<{ Querystring: { name: string } }>, reply: FastifyReply) {
+    const name = req.query.name;
+    const data = await getSurahContent();
+
+    const search = normalizeArabic(name);
+
+    const surahData = data.surah.find((r) => normalizeArabic(r.name).includes(search));
+
+    if (!surahData) {
+        return reply.status(404).send({
+            success: false,
+            message: 'Surah not found',
+        });
+    }
+
+    return reply.send({
+        success: true,
+        data: surahData,
+    });
 }

@@ -5,10 +5,12 @@
  */
 
 import { FastifyInstance } from 'fastify';
-import { getSurahById, getSurah } from './surah.controller.js';
+import { getSurahById, getSurah, getReciterByName } from './surah.controller.js';
 
 export default async function radioRoutes(fastify: FastifyInstance) {
     fastify.get('/surah', getSurah);
 
     fastify.get('/surah/:id', getSurahById);
+
+    fastify.get('/surah/search', getReciterByName);
 }

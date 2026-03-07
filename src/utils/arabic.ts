@@ -1,0 +1,20 @@
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 RlxChap2 and kremdev
+ * MIT License
+ */
+
+export function normalizeArabic(text: string) {
+    return text
+        .normalize('NFKD')
+        .replace(/[\u064B-\u065F\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g, '')
+        .replace(/[إأآا]/g, 'ا')
+        .replace(/[يى]/g, 'ي')
+        .replace(/[ؤو]/g, 'و')
+        .replace(/[ةه]/g, 'ه')
+        .replace(/[ئ]/g, 'ي')
+        .replace(/آ/g, 'ا')
+        .replace(/[^ء-ي\s]/g, '')
+        .toLowerCase()
+        .trim();
+}

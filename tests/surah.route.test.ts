@@ -50,4 +50,19 @@ describe('GET /surah', () => {
 
         expect(res.statusCode).toBe(404);
     });
+
+    /**
+     * dependes on mp3quran api, so we will test it later on another test suite
+     * @todo test surah by name using any another api that provides surah by name, or mock the mp3quran api response
+     */
+    it('should return surah by name', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/surah/search?name=الفاتحة',
+        });
+
+        expect(res.statusCode).toBe(200);
+        const body = res.json();
+        expect(body.data).toBeDefined();
+    });
 });
