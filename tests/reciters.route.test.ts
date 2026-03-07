@@ -70,4 +70,15 @@ describe('GET /reciters', () => {
 
         expect(res.statusCode).toBe(400);
     });
+
+    it('should return reciter by name', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/reciters/search?name=عبدالباسط عبدالصمد',
+        });
+
+        expect(res.statusCode).toBe(200);
+        const body = res.json();
+        expect(body.data).toBeDefined();
+    });
 });
