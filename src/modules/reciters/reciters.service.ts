@@ -5,19 +5,7 @@
  */
 
 import type { ApiFunction, Mp3QuranRecitersResponse } from '@/src/types/Api.js';
-
-export interface ReciterItem {
-    id: number;
-    name: string;
-    makkia?: boolean;
-    date?: string;
-    moshaf?: {
-        id: number;
-        name: string;
-        server: string;
-    }[];
-    apiName: 'mp3quran.net';
-}
+import type { ReciterItem } from "@/src/types/Items.js";
 
 export const reciterApis: ApiFunction<ReciterItem>[] = [
     async () => {

@@ -5,35 +5,27 @@
  */
 
 import type { ApiFunction, AlQuranAyatResponse } from '@/src/types/Api.js';
+import type { SurahWithAyaItem } from '@/src/types/Items.js';
 
-export interface AyatItem {
-    id: number;
-    aya: string;
-    surahName: string;
-    numberInSurah: number;
-    surah: number;
-    apiName: 'alquran.cloud';
-}
-
-export const ayatApis: ApiFunction<AyatItem>[] = [
+export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
     async () => {
         const res = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');
         if (!res.ok) throw new Error('API alquran.cloud failed');
 
         const json = (await res.json()) as AlQuranAyatResponse;
 
-        const surahs = json.data.surahs;
-
-        return surahs.flatMap((surah) =>
-            surah.ayahs.map((a) => ({
-                id: a.number,
-                surahName: surah.name,
-                aya: a.text,
-                numberInSurah: a.numberInSurah,
-                surah: surah.number,
-                apiName: 'alquran.cloud',
+        const surahs: SurahWithAyaItem[] = json.data.surahs.map((surah) => ({
+            number: surah.number,
+            name: surah.name,
+            ayat: surah.ayahs.map((ayah) => ({
+                number: ayah.number,
+                text: ayah.text,
+                numberInSurah: ayah.numberInSurah,
             })),
-        );
+            apiName: 'alquran.cloud'
+        }));
+
+        return [surahs];
     },
 ];
 
@@ -53,7 +45,8 @@ export async function fetchWithFallback<T>(apis: ApiFunction<T>[]): Promise<T[]>
     return [];
 }
 
-export async function getAyatContent(): Promise<{ ayat: AyatItem[] }> {
-    const ayat = await fetchWithFallback(ayatApis);
-    return { ayat };
+export async function getAyatContent(): Promise<{ surahs: SurahWithAyaItem[] }> {
+    const results = await fetchWithFallback(ayatApis);
+    const surahs = results[0] || [];
+    return { surahs };
 }

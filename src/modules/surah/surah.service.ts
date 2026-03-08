@@ -5,14 +5,7 @@
  */
 
 import type { ApiFunction, Mp3QuranSurahResponse, AlQuranSurahResponse } from '@/src/types/Api.js';
-
-export interface SurahItem {
-    id: number;
-    name: string;
-    makkia?: boolean;
-    revelationType?: boolean;
-    apiName: 'mp3quran.net' | 'alquran.cloud';
-}
+import type { SurahItem } from '@/src/types/Items.js';
 
 export const surahApis: ApiFunction<SurahItem>[] = [
     async () => {

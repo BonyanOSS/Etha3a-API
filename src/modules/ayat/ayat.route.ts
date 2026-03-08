@@ -5,10 +5,14 @@
  */
 
 import { FastifyInstance } from 'fastify';
-import { getAllAyat, getAyatById } from './ayat.controller.js';
+import { getAllAyat, getAyatById, getAyatBySurah, getAyatByText } from './ayat.controller.js';
 
 export default async function ayatRoutes(fastify: FastifyInstance) {
+    fastify.get('/ayat/search', getAyatByText);
+
     fastify.get('/ayat', getAllAyat);
+
+    fastify.get('/ayat/:surah/aya/:id', getAyatBySurah);
 
     fastify.get('/ayat/:id', getAyatById);
 }
