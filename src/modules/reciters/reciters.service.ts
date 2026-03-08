@@ -5,7 +5,7 @@
  */
 
 import type { ApiFunction, Mp3QuranRecitersResponse } from '@/src/types/Api.js';
-import type { ReciterItem } from "@/src/types/Items.js";
+import type { ReciterItem } from '@/src/types/Items.js';
 
 export const reciterApis: ApiFunction<ReciterItem>[] = [
     async () => {
