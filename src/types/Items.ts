@@ -1,7 +1,11 @@
 /*
+
  * Etha3a – Quran & Azkar API
+
  * Copyright (c) 2026 RlxChap2 and kremdev
+
  * MIT License
+
  */
 
 /* ------------------ RecitersItem ------------------ */
@@ -37,11 +41,13 @@ export interface AyaItem {
     numberInSurah: number;
 }
 
-/* ------------------ SurahWithAyaItem ------------------ */
+/* ------------------ AzkarCategories  ------------------ */
 
-export interface SurahWithAyaItem {
-    number: number;
-    name: string;
-    ayat: AyaItem[];
-    apiName: 'alquran.cloud';
+export type AzkarCategories = 'morning' | 'evening' | 'sleep' | 'wakeup';
+
+export enum AzkarEndpoints {
+    morning = 1,
+    evening = 2,
+    sleep = 3,
+    wakeup = 4,
 }

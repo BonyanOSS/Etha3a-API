@@ -1,16 +1,16 @@
-/*
- * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
- * MIT License
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 RlxChap2 and kremdev
+ * MIT License
  */
 
 import { FastifyInstance } from 'fastify';
-import { getSurahById, getSurah, getReciterByName } from './surah.controller.js';
+import { getSurahById, getSurah, getSurahByName } from './surah.controller.js';
 
-export default async function radioRoutes(fastify: FastifyInstance) {
+export default async function surahRoutes(fastify: FastifyInstance) {
     fastify.get('/surah', getSurah);
 
     fastify.get('/surah/:id', getSurahById);
 
-    fastify.get('/surah/search', getReciterByName);
+    fastify.get('/surah/search', getSurahByName);
 }

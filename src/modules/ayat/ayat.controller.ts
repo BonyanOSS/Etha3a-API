@@ -1,7 +1,11 @@
 /*
+
  * Etha3a – Quran & Azkar API
+
  * Copyright (c) 2026 RlxChap2 and kremdev
+
  * MIT License
+
  */
 
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -21,10 +25,7 @@ export async function getAllAyat(req: FastifyRequest, reply: FastifyReply) {
     }
 }
 
-export async function getAyatById(
-    req: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply
-) {
+export async function getAyatById(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
     const id = parseInt(req.params.id);
     if (Number.isNaN(id)) {
         return reply.status(400).send({
@@ -60,18 +61,14 @@ export async function getAyatById(
     });
 }
 
-
-export async function getAyatBySurah(
-    req: FastifyRequest<{ Params: { surah: string; id: string } }>,
-    reply: FastifyReply
-) {
+export async function getAyatBySurah(req: FastifyRequest<{ Params: { surah: string; id: string } }>, reply: FastifyReply) {
     const surahNum = parseInt(req.params.surah);
     const ayaNum = parseInt(req.params.id);
 
     if (isNaN(surahNum) || isNaN(ayaNum)) {
         return reply.status(400).send({
             success: false,
-            message: "Surah and Aya numbers must be valid integers",
+            message: 'Surah and Aya numbers must be valid integers',
         });
     }
 
@@ -102,10 +99,7 @@ export async function getAyatBySurah(
         },
     });
 }
-export async function getAyatByText(
-    req: FastifyRequest<{ Querystring: { text: string } }>,
-    reply: FastifyReply
-) {
+export async function getAyatByText(req: FastifyRequest<{ Querystring: { text: string } }>, reply: FastifyReply) {
     const text = req.query.text;
     if (!text) {
         return reply.status(400).send({

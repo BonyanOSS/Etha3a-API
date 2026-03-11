@@ -1,11 +1,11 @@
-/*
- * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
- * MIT License
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 RlxChap2 and kremdev
+ * MIT License
  */
 
 import type { ApiFunction, Mp3QuranRecitersResponse } from '@/src/types/Api.js';
-import type { ReciterItem } from "@/src/types/Items.js";
+import type { ReciterItem } from '@/src/types/Items.js';
 
 export const reciterApis: ApiFunction<ReciterItem>[] = [
     async () => {

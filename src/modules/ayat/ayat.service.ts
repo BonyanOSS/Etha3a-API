@@ -22,7 +22,7 @@ export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
                 text: ayah.text,
                 numberInSurah: ayah.numberInSurah,
             })),
-            apiName: 'alquran.cloud'
+            apiName: 'alquran.cloud',
         }));
 
         return [surahs];
