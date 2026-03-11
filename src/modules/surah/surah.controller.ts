@@ -45,7 +45,7 @@ export async function getSurahById(req: FastifyRequest<{ Params: { id: string } 
     }
 }
 
-export async function getReciterByName(req: FastifyRequest<{ Querystring: { name: string } }>, reply: FastifyReply) {
+export async function getSurahByName(req: FastifyRequest<{ Querystring: { name: string } }>, reply: FastifyReply) {
     const name = req.query.name;
     const data = await getSurahContent();
 

@@ -1,7 +1,11 @@
 /*
+
  * Etha3a – Quran & Azkar API
+
  * Copyright (c) 2026 RlxChap2 and kremdev
+
  * MIT License
+
  */
 
 import type { ApiFunction, AlQuranAyatResponse } from '@/src/types/Api.js';
@@ -22,7 +26,7 @@ export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
                 text: ayah.text,
                 numberInSurah: ayah.numberInSurah,
             })),
-            apiName: 'alquran.cloud'
+            apiName: 'alquran.cloud',
         }));
 
         return [surahs];
