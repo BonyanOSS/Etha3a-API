@@ -1,7 +1,7 @@
-/*
- * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
- * MIT License
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 RlxChap2 and kremdev
+ * MIT License
  */
 
 export type ApiFunction<T> = () => Promise<T[]>;
@@ -64,3 +64,14 @@ export interface AlQuranAyatResponse {
         }[];
     };
 }
+
+/* ------------------ Hisnmuslim API ------------------ */
+
+// export interface HisnmuslimItem {
+//     ID: number;
+//     ARABIC_TEXT: string;
+//     LANGUAGE_ARABIC_TRANSLATED_TEXT: string;
+//     TRANSLATED_TEXT: string;
+//     REPEAT: number;
+//     AUDIO: string;
+// }

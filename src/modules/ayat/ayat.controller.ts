@@ -1,12 +1,16 @@
 /*
+
  * Etha3a – Quran & Azkar API
+
  * Copyright (c) 2026 RlxChap2 and kremdev
+
  * MIT License
+
  */
 
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getAyatContent } from './ayat.service.js';
-import { AyaItem } from '@/src/types/Items.js';
+import type { AyaItem } from '@/src/types/Items.js';
 import { normalizeArabicForQuranSearch } from '@/src/utils/arabic.js';
 
 export async function getAllAyat(req: FastifyRequest, reply: FastifyReply) {
