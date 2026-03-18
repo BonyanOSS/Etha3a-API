@@ -1,11 +1,7 @@
 /*
-
  * Etha3a – Quran & Azkar API
-
  * Copyright (c) 2026 RlxChap2 and kremdev
-
  * MIT License
-
  */
 
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -55,7 +51,7 @@ export async function getSurahByName(req: FastifyRequest<{ Querystring: { name: 
 
     const search = normalizeArabic(name);
 
-    const surahData = data.surah.find((r) => normalizeArabic(r.name).includes(search));
+    const surahData = data.surah.filter((r) => normalizeArabic(r.name).includes(search));
 
     if (!surahData) {
         return reply.status(404).send({

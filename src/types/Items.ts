@@ -47,6 +47,7 @@ export type Zekr = {
 export type AzkarItem = {
     category: AzkarCategory;
     items: Zekr[];
+    sunnah?: string;
 };
 
 export enum AzkarCategory {

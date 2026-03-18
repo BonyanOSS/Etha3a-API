@@ -1,7 +1,11 @@
-/*
- * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
- * MIT License
+/*
+
+ * Etha3a – Quran & Azkar API
+
+ * Copyright (c) 2026 RlxChap2 and kremdev
+
+ * MIT License
+
  */
 
 import type { ApiFunction, Mp3QuranSurahResponse, AlQuranSurahResponse } from '@/src/types/Api.js';
