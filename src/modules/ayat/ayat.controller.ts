@@ -7,7 +7,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getAyatContent } from './ayat.service.js';
 import type { AyaItem } from '@/src/types/Items.js';
-import { normalizeArabicForQuranSearch } from '@/src/utils/arabic.js';
+import { normalizeArabicForQuranSearch } from '../../utils/arabic.js';
 
 export async function getAllAyat(req: FastifyRequest, reply: FastifyReply) {
     try {
