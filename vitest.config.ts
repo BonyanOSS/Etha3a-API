@@ -1,3 +1,9 @@
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 BonyanOSS
+ * MIT License
+ */
+
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
