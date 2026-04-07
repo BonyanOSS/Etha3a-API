@@ -1,11 +1,11 @@
 /*
  * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
+ * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import type { ReciterItem } from '../src/modules/reciters/reciters.service';
+import type { ReciterItem } from '../src/types/Items';
 import { getRadioContent, fetchWithFallback } from '../src/modules/reciters/reciters.service';
 
 describe('Reciters Service', () => {

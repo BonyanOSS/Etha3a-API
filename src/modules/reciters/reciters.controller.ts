@@ -1,6 +1,6 @@
 /*
  * Etha3a – Quran & Azkar API
- * Copyright (c) 2026 RlxChap2 and kremdev
+ * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
 

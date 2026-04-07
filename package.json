@@ -20,7 +20,7 @@
         "typescript",
         "fastify"
     ],
-    "author": "RlxChap2, kremdev",
+    "author": "BonyanOSS",
     "license": "MIT",
     "packageManager": "pnpm@10.33.0",
     "dependencies": {

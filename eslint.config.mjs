@@ -28,7 +28,7 @@ export default [
                 {
                     files: ['scripts/header.txt'],
                     templates: {
-                        author: ['.*', 'RlxChap2 and kremdev'],
+                        author: ['.*', 'BonyanOSS'],
                     },
                 },
             ],
