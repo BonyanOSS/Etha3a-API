@@ -10,7 +10,6 @@ import cors from '@fastify/cors';
 import radioRoutes from './modules/reciters/reciters.route.js';
 import surahRoutes from './modules/surah/surah.route.js';
 import ayatRoutes from './modules/ayat/ayat.route.js';
-import azkarRoutes from './modules/azkar/azkar.route.js';
 
 const app = Fastify({ logger: true });
 
@@ -40,7 +39,6 @@ app.get('/health', async () => ({ status: 'ok', code: 200 }));
 app.register(radioRoutes);
 app.register(surahRoutes);
 app.register(ayatRoutes);
-app.register(azkarRoutes);
 
 const port = Number(process.env.PORT) || 3000;
 app.listen({ port });
