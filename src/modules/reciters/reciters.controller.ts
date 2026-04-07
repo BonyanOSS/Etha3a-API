@@ -101,7 +101,7 @@ export async function getReciterByName(req: FastifyRequest<{ Querystring: { name
 
     const search = normalizeArabic(name);
 
-    const reciterData = data.reciters.find((r) => normalizeArabic(r.name).includes(search));
+    const reciterData = data.reciters.filter((r) => normalizeArabic(r.name).includes(search));
 
     if (!reciterData) {
         return reply.status(404).send({

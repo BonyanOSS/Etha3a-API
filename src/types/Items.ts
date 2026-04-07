@@ -37,25 +37,6 @@ export interface AyaItem {
     numberInSurah: number;
 }
 
-/* ------------------ AzkarCategory  ------------------ */
-
-export type Zekr = {
-    readonly zekr: string;
-    readonly repeat: number;
-};
-
-export type AzkarItem = {
-    category: AzkarCategory;
-    items: Zekr[];
-};
-
-export enum AzkarCategory {
-    morning = 'أذكار الصباح',
-    evening = 'أذكار المساء',
-    sleep = 'أذكار النوم',
-    wakeup = 'أذكار الاستيقاظ',
-}
-
 /* ------------------ SurahWithAyaItem ------------------ */
 
 export interface SurahWithAyaItem {
