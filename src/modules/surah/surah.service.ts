@@ -4,13 +4,15 @@
  * MIT License
  */
 
-import type { ApiFunction, Mp3QuranSurahResponse, AlQuranSurahResponse } from '@/src/types/Api.js';
+import type { ApiFunction, Mp3QuranSurahResponse, AlQuranSurahResponse, QuranComChaptersResponse } from '@/src/types/Api.js';
 import type { SurahItem } from '@/src/types/Items.js';
+import { fetchWithTimeout } from '../../utils/fallback.js';
+import { memoize } from '../../utils/cache.js';
 
 export const surahApis: ApiFunction<SurahItem>[] = [
     async () => {
-        const res = await fetch('https://www.mp3quran.net/api/v3/suwar');
-        if (!res.ok) throw new Error('API mp3quran.net failed');
+        const res = await fetchWithTimeout('https://www.mp3quran.net/api/v3/suwar');
+        if (!res.ok) throw new Error('mp3quran.net suwar failed');
 
         const json = (await res.json()) as Mp3QuranSurahResponse;
 
@@ -18,13 +20,13 @@ export const surahApis: ApiFunction<SurahItem>[] = [
             id: s.id,
             name: s.name,
             makkia: s.makkia === 1 ? true : s.makkia === 0 ? false : undefined,
-            apiName: 'mp3quran.net',
+            apiName: 'mp3quran.net' as const,
         }));
     },
 
     async () => {
-        const res = await fetch('https://api.alquran.cloud/v1/surah');
-        if (!res.ok) throw new Error('API alquran.cloud failed');
+        const res = await fetchWithTimeout('https://api.alquran.cloud/v1/surah');
+        if (!res.ok) throw new Error('alquran.cloud surah failed');
 
         const json = (await res.json()) as AlQuranSurahResponse;
 
@@ -32,7 +34,21 @@ export const surahApis: ApiFunction<SurahItem>[] = [
             id: s.id,
             name: s.name,
             makkia: s.revelationType.toLowerCase() === 'meccan',
-            apiName: 'alquran.cloud',
+            apiName: 'alquran.cloud' as const,
+        }));
+    },
+
+    async () => {
+        const res = await fetchWithTimeout('https://api.quran.com/api/v4/chapters?language=ar');
+        if (!res.ok) throw new Error('quran.com chapters failed');
+
+        const json = (await res.json()) as QuranComChaptersResponse;
+
+        return json.chapters.map((c) => ({
+            id: c.id,
+            name: c.name_arabic,
+            makkia: c.revelation_place.toLowerCase() === 'makkah',
+            apiName: 'quran.com' as const,
         }));
     },
 ];
@@ -54,6 +70,6 @@ export async function fetchWithFallback<T>(apis: ApiFunction<T>[]): Promise<T[]>
 }
 
 export async function getSurahContent(): Promise<{ surah: SurahItem[] }> {
-    const surah = await fetchWithFallback(surahApis);
+    const surah = await memoize('surah:all', () => fetchWithFallback(surahApis), { ttlMs: 1000 * 60 * 60 * 12 });
     return { surah };
 }

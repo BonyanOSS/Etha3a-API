@@ -1,0 +1,47 @@
+/*
+ * Etha3a – Quran & Azkar API
+ * Copyright (c) 2026 BonyanOSS
+ * MIT License
+ */
+
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { gregorianToHijri, hijriToGregorian } from './hijri.service.js';
+import { fail, ok, unavailable } from '../../utils/http.js';
+
+const DATE_RE = /^\d{2}-\d{2}-\d{4}$/;
+
+function todayDDMMYYYY(): string {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+}
+
+export async function convertGregorianToHijri(req: FastifyRequest<{ Querystring: { date?: string } }>, reply: FastifyReply) {
+    const date = req.query.date?.trim() || todayDDMMYYYY();
+    if (!DATE_RE.test(date)) return fail(reply, 400, 'Date must be in DD-MM-YYYY format');
+
+    try {
+        return ok(reply, await gregorianToHijri(date));
+    } catch (err) {
+        return unavailable(reply, err);
+    }
+}
+
+export async function convertHijriToGregorian(req: FastifyRequest<{ Querystring: { date?: string } }>, reply: FastifyReply) {
+    const date = req.query.date?.trim();
+    if (!date) return fail(reply, 400, 'Query parameter "date" (DD-MM-YYYY) is required');
+    if (!DATE_RE.test(date)) return fail(reply, 400, 'Date must be in DD-MM-YYYY format');
+
+    try {
+        return ok(reply, await hijriToGregorian(date));
+    } catch (err) {
+        return unavailable(reply, err);
+    }
+}
+
+export async function getToday(_req: FastifyRequest, reply: FastifyReply) {
+    try {
+        return ok(reply, await gregorianToHijri(todayDDMMYYYY()));
+    } catch (err) {
+        return unavailable(reply, err);
+    }
+}

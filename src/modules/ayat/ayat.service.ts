@@ -6,11 +6,17 @@
 
 import type { ApiFunction, AlQuranAyatResponse } from '@/src/types/Api.js';
 import type { SurahWithAyaItem } from '@/src/types/Items.js';
+import { fetchWithTimeout } from '../../utils/fallback.js';
+import { memoize } from '../../utils/cache.js';
+
+interface FawazQuranEdition {
+    quran: { chapter: number; verse: number; text: string }[];
+}
 
 export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
     async () => {
-        const res = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');
-        if (!res.ok) throw new Error('API alquran.cloud failed');
+        const res = await fetchWithTimeout('https://api.alquran.cloud/v1/quran/quran-uthmani', {}, 20000);
+        if (!res.ok) throw new Error('alquran.cloud full quran failed');
 
         const json = (await res.json()) as AlQuranAyatResponse;
 
@@ -22,8 +28,35 @@ export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
                 text: ayah.text,
                 numberInSurah: ayah.numberInSurah,
             })),
-            apiName: 'alquran.cloud',
+            apiName: 'alquran.cloud' as const,
         }));
+
+        return [surahs];
+    },
+
+    async () => {
+        const res = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranuthmanihaf.json', {}, 20000);
+        if (!res.ok) throw new Error('jsdelivr quran-api fallback failed');
+
+        const json = (await res.json()) as FawazQuranEdition;
+        const grouped = new Map<number, { number: number; text: string; numberInSurah: number }[]>();
+
+        let absoluteNumber = 0;
+        for (const verse of json.quran) {
+            absoluteNumber += 1;
+            const list = grouped.get(verse.chapter) ?? [];
+            list.push({ number: absoluteNumber, text: verse.text, numberInSurah: verse.verse });
+            grouped.set(verse.chapter, list);
+        }
+
+        const surahs: SurahWithAyaItem[] = Array.from(grouped.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([num, ayat]) => ({
+                number: num,
+                name: `سورة ${num}`,
+                ayat,
+                apiName: 'quran.gading.dev' as const,
+            }));
 
         return [surahs];
     },
@@ -46,7 +79,7 @@ export async function fetchWithFallback<T>(apis: ApiFunction<T>[]): Promise<T[]>
 }
 
 export async function getAyatContent(): Promise<{ surahs: SurahWithAyaItem[] }> {
-    const results = await fetchWithFallback(ayatApis);
+    const results = await memoize('ayat:full', () => fetchWithFallback(ayatApis), { ttlMs: 1000 * 60 * 60 * 24 });
     const surahs = results[0] || [];
     return { surahs };
 }

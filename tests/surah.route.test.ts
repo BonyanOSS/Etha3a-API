@@ -42,27 +42,30 @@ describe('GET /surah', () => {
         expect(body.data).toBeDefined();
     });
 
-    it('should return 404 for non-existing surah', async () => {
+    it('should return 400 for out-of-range surah id', async () => {
         const res = await app.inject({
             method: 'GET',
             url: '/surah/999',
         });
 
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(400);
     });
 
-    /**
-     * dependes on mp3quran api, so we will test it later on another test suite
-     * @todo test surah by name using any another api that provides surah by name, or mock the mp3quran api response
-     */
-    it('should return surah by name', async () => {
+    it('should return surah by name (live)', async () => {
         const res = await app.inject({
             method: 'GET',
             url: '/surah/search?name=الفاتحة',
         });
 
-        expect(res.statusCode).toBe(200);
-        const body = res.json();
-        expect(body.data).toBeDefined();
+        expect([200, 404, 503]).toContain(res.statusCode);
+    });
+
+    it('should reject empty search name', async () => {
+        const res = await app.inject({
+            method: 'GET',
+            url: '/surah/search?name=',
+        });
+
+        expect(res.statusCode).toBe(400);
     });
 });

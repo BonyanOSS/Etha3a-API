@@ -4,13 +4,15 @@
  * MIT License
  */
 
-import type { ApiFunction, Mp3QuranRecitersResponse } from '@/src/types/Api.js';
+import type { ApiFunction, Mp3QuranRecitersResponse, QuranComRecitationsResponse } from '@/src/types/Api.js';
 import type { ReciterItem } from '@/src/types/Items.js';
+import { fetchWithTimeout } from '../../utils/fallback.js';
+import { memoize } from '../../utils/cache.js';
 
 export const reciterApis: ApiFunction<ReciterItem>[] = [
     async () => {
-        const res = await fetch('https://www.mp3quran.net/api/v3/reciters');
-        if (!res.ok) throw new Error('API mp3quran.net failed');
+        const res = await fetchWithTimeout('https://www.mp3quran.net/api/v3/reciters');
+        if (!res.ok) throw new Error('mp3quran.net reciters failed');
 
         const json = (await res.json()) as Mp3QuranRecitersResponse;
 
@@ -18,12 +20,22 @@ export const reciterApis: ApiFunction<ReciterItem>[] = [
             id: s.id,
             name: s.name,
             date: s.date,
-            moshaf: s.moshaf.map((m) => ({
-                id: m.id,
-                name: m.name,
-                server: m.server,
-            })),
-            apiName: 'mp3quran.net',
+            moshaf: s.moshaf.map((m) => ({ id: m.id, name: m.name, server: m.server })),
+            apiName: 'mp3quran.net' as const,
+        }));
+    },
+
+    async () => {
+        const res = await fetchWithTimeout('https://api.quran.com/api/v4/resources/recitations?language=ar');
+        if (!res.ok) throw new Error('quran.com recitations failed');
+
+        const json = (await res.json()) as QuranComRecitationsResponse;
+
+        return json.recitations.map((r) => ({
+            id: r.id,
+            name: r.translated_name?.name || r.reciter_name,
+            style: r.style,
+            apiName: 'quran.com' as const,
         }));
     },
 ];
@@ -45,6 +57,6 @@ export async function fetchWithFallback<T>(apis: ApiFunction<T>[]): Promise<T[]>
 }
 
 export async function getRadioContent(): Promise<{ reciters: ReciterItem[] }> {
-    const reciters = await fetchWithFallback(reciterApis);
+    const reciters = await memoize('reciters:all', () => fetchWithFallback(reciterApis), { ttlMs: 1000 * 60 * 60 });
     return { reciters };
 }

@@ -8,136 +8,81 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { getAyatContent } from './ayat.service.js';
 import type { AyaItem } from '@/src/types/Items.js';
 import { normalizeArabicForQuranSearch } from '../../utils/arabic.js';
+import { fail, ok, unavailable } from '../../utils/http.js';
 
-export async function getAllAyat(req: FastifyRequest, reply: FastifyReply) {
+export async function getAllAyat(_req: FastifyRequest, reply: FastifyReply) {
     try {
         const data = await getAyatContent();
-        return reply.send({ success: true, data });
+        return ok(reply, data);
     } catch (err) {
-        return reply.status(503).send({
-            success: false,
-            message: (err as Error).message || 'No APIs available',
-        });
+        return unavailable(reply, err);
     }
 }
 
 export async function getAyatById(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-    const id = parseInt(req.params.id);
-    if (Number.isNaN(id)) {
-        return reply.status(400).send({
-            success: false,
-            message: 'Invalid Aya ID',
-        });
-    } else if (id < 1 || id > 6236) {
-        return reply.status(400).send({
-            success: false,
-            message: 'ID must be between 1 and 6236',
-        });
-    }
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) return fail(reply, 400, 'Invalid Aya ID');
+    if (id < 1 || id > 6236) return fail(reply, 400, 'ID must be between 1 and 6236');
 
-    const data = await getAyatContent();
-
-    for (const surah of data.surahs) {
-        const aya = surah.ayat.find((a) => a.number === id);
-        if (aya) {
-            return reply.send({
-                success: true,
-                data: {
-                    surahNumber: surah.number,
-                    surahName: surah.name,
-                    aya,
-                },
-            });
+    try {
+        const data = await getAyatContent();
+        for (const surah of data.surahs) {
+            const aya = surah.ayat.find((a) => a.number === id);
+            if (aya) return ok(reply, { surahNumber: surah.number, surahName: surah.name, aya });
         }
+        return fail(reply, 404, 'Aya not found');
+    } catch (err) {
+        return unavailable(reply, err);
     }
-
-    return reply.status(404).send({
-        success: false,
-        message: 'Aya not found',
-    });
 }
 
 export async function getAyatBySurah(req: FastifyRequest<{ Params: { surah: string; id: string } }>, reply: FastifyReply) {
-    const surahNum = parseInt(req.params.surah);
-    const ayaNum = parseInt(req.params.id);
+    const surahNum = parseInt(req.params.surah, 10);
+    const ayaNum = parseInt(req.params.id, 10);
 
-    if (isNaN(surahNum) || isNaN(ayaNum)) {
-        return reply.status(400).send({
-            success: false,
-            message: 'Surah and Aya numbers must be valid integers',
-        });
+    if (Number.isNaN(surahNum) || Number.isNaN(ayaNum)) {
+        return fail(reply, 400, 'Surah and Aya numbers must be valid integers');
     }
+    if (surahNum < 1 || surahNum > 114) return fail(reply, 400, 'Surah number must be between 1 and 114');
 
-    const data = await getAyatContent();
+    try {
+        const data = await getAyatContent();
+        const surah = data.surahs.find((s) => s.number === surahNum);
+        if (!surah) return fail(reply, 404, `Surah ${surahNum} not found`);
 
-    const surah = data.surahs.find((s) => s.number === surahNum);
-    if (!surah) {
-        return reply.status(404).send({
-            success: false,
-            message: `Surah ${surahNum} not found`,
-        });
+        const aya = surah.ayat.find((a) => a.numberInSurah === ayaNum);
+        if (!aya) return fail(reply, 404, `Aya ${ayaNum} in Surah ${surahNum} not found`);
+
+        return ok(reply, { surahNumber: surah.number, surahName: surah.name, aya });
+    } catch (err) {
+        return unavailable(reply, err);
     }
-
-    const aya = surah.ayat.find((a) => a.numberInSurah === ayaNum);
-    if (!aya) {
-        return reply.status(404).send({
-            success: false,
-            message: `Aya ${ayaNum} in Surah ${surahNum} not found`,
-        });
-    }
-
-    return reply.send({
-        success: true,
-        data: {
-            surahNumber: surah.number,
-            surahName: surah.name,
-            aya,
-        },
-    });
 }
 
-export async function getAyatByText(req: FastifyRequest<{ Querystring: { text: string } }>, reply: FastifyReply) {
-    const text = req.query.text;
-    if (!text) {
-        return reply.status(400).send({
-            success: false,
-            message: 'Query parameter "text" is required',
-        });
-    }
+export async function getAyatByText(req: FastifyRequest<{ Querystring: { text?: string; limit?: string } }>, reply: FastifyReply) {
+    const text = req.query.text?.trim();
+    if (!text) return fail(reply, 400, 'Query parameter "text" is required');
 
-    const data = await getAyatContent();
+    const limit = Math.min(Math.max(parseInt(req.query.limit ?? '50', 10) || 50, 1), 500);
 
-    const results: {
-        surahNumber: number;
-        surahName: string;
-        aya: AyaItem;
-    }[] = [];
+    try {
+        const data = await getAyatContent();
+        const results: { surahNumber: number; surahName: string; aya: AyaItem }[] = [];
+        const queryNorm = normalizeArabicForQuranSearch(text);
 
-    const queryNorm = normalizeArabicForQuranSearch(text);
-
-    for (const surah of data.surahs) {
-        for (const aya of surah.ayat) {
-            const ayaNorm = normalizeArabicForQuranSearch(aya.text);
-            if (ayaNorm.includes(queryNorm)) {
-                results.push({
-                    surahNumber: surah.number,
-                    surahName: surah.name,
-                    aya,
-                });
+        for (const surah of data.surahs) {
+            for (const aya of surah.ayat) {
+                if (normalizeArabicForQuranSearch(aya.text).includes(queryNorm)) {
+                    results.push({ surahNumber: surah.number, surahName: surah.name, aya });
+                    if (results.length >= limit) break;
+                }
             }
+            if (results.length >= limit) break;
         }
-    }
 
-    if (results.length === 0) {
-        return reply.status(404).send({
-            success: false,
-            message: `No Ayat found containing "${text}"`,
-        });
+        if (results.length === 0) return fail(reply, 404, `No Ayat found containing "${text}"`);
+        return reply.send({ success: true, total: results.length, data: results });
+    } catch (err) {
+        return unavailable(reply, err);
     }
-
-    return reply.send({
-        success: true,
-        total: results.length,
-        data: results,
-    });
 }

@@ -7,61 +7,43 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getSurahContent } from './surah.service.js';
 import { normalizeArabic } from '../../utils/arabic.js';
+import { fail, ok, unavailable } from '../../utils/http.js';
 
-export async function getSurah(req: FastifyRequest, reply: FastifyReply) {
+export async function getSurah(_req: FastifyRequest, reply: FastifyReply) {
     try {
         const data = await getSurahContent();
-        return reply.send({ success: true, data });
+        return ok(reply, data);
     } catch (err) {
-        return reply.status(503).send({
-            success: false,
-            message: (err as Error).message || 'No APIs available',
-        });
+        return unavailable(reply, err);
     }
 }
 
 export async function getSurahById(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id < 1 || id > 114) return fail(reply, 400, 'Surah id must be between 1 and 114');
+
     try {
         const data = await getSurahContent();
-
-        const surah = data.surah.find((s) => s.id === parseInt(req.params.id));
-
-        if (!surah) {
-            return reply.status(404).send({
-                success: false,
-                message: 'Surah not found',
-            });
-        }
-
-        return reply.send({
-            success: true,
-            data: surah,
-        });
+        const surah = data.surah.find((s) => s.id === id);
+        if (!surah) return fail(reply, 404, 'Surah not found');
+        return ok(reply, surah);
     } catch (err) {
-        return reply.status(503).send({
-            success: false,
-            message: (err as Error).message || 'No APIs available',
-        });
+        return unavailable(reply, err);
     }
 }
 
-export async function getSurahByName(req: FastifyRequest<{ Querystring: { name: string } }>, reply: FastifyReply) {
-    const name = req.query.name;
-    const data = await getSurahContent();
+export async function getSurahByName(req: FastifyRequest<{ Querystring: { name?: string } }>, reply: FastifyReply) {
+    const name = req.query.name?.trim();
+    if (!name) return fail(reply, 400, 'Query parameter "name" is required');
 
-    const search = normalizeArabic(name);
+    try {
+        const data = await getSurahContent();
+        const search = normalizeArabic(name);
+        const matches = data.surah.filter((r) => normalizeArabic(r.name).includes(search));
 
-    const surahData = data.surah.filter((r) => normalizeArabic(r.name).includes(search));
-
-    if (!surahData) {
-        return reply.status(404).send({
-            success: false,
-            message: 'Surah not found',
-        });
+        if (matches.length === 0) return fail(reply, 404, 'Surah not found');
+        return ok(reply, matches);
+    } catch (err) {
+        return unavailable(reply, err);
     }
-
-    return reply.send({
-        success: true,
-        data: surahData,
-    });
 }
