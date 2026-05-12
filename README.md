@@ -156,7 +156,7 @@ The root `GET /` returns a JSON catalogue of every registered route. `GET /healt
 #### Local development
 
 ```bash
-git clone https://github.com/RlxChap2/Etha3a-API.git
+git clone https://github.com/BonyanOSS/Etha3a-API.git
 cd Etha3a-API
 pnpm install
 cp .env.example .env       # adjust PORT / RATE_LIMIT_* if needed
@@ -393,7 +393,7 @@ This software is released under the [MIT License](./LICENSE).
 #### التشغيل المحلي
 
 ```bash
-git clone https://github.com/RlxChap2/Etha3a-API.git
+git clone https://github.com/BonyanOSS/Etha3a-API.git
 cd Etha3a-API
 pnpm install
 cp .env.example .env
