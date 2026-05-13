@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
     title: Bonyan-API
-    version: 1.2.0
+    version: 2.0.0
     summary: Multi-source fallback REST API for Islamic digital content.
     license:
         name: MIT
