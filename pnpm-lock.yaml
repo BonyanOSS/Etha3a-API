@@ -17,24 +17,9 @@ importers:
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@10.0.2)
-      eslint-plugin-prettier:
-        specifier: ^5.5.5
-        version: 5.5.5(eslint-config-prettier@10.1.8(eslint@10.0.2))(eslint@10.0.2)(prettier@3.8.1)
-      eslint-plugin-simple-header:
-        specifier: ^1.2.2
-        version: 1.2.2(eslint@10.0.2)
       fastify:
         specifier: ^5.7.4
         version: 5.7.4
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@25.3.3)(typescript@5.9.3)
-      typescript-eslint:
-        specifier: ^8.56.1
-        version: 8.56.1(eslint@10.0.2)(typescript@5.9.3)
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -57,18 +42,33 @@ importers:
       eslint:
         specifier: '>=10'
         version: 10.0.2
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@10.0.2)
+      eslint-plugin-prettier:
+        specifier: ^5.5.5
+        version: 5.5.5(eslint-config-prettier@10.1.8(eslint@10.0.2))(eslint@10.0.2)(prettier@3.8.1)
+      eslint-plugin-simple-header:
+        specifier: ^1.2.2
+        version: 1.2.2(eslint@10.0.2)
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
       supertest:
         specifier: ^7.2.2
         version: 7.2.2
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@25.3.3)(typescript@5.9.3)
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.56.1
+        version: 8.56.1(eslint@10.0.2)(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.3)(tsx@4.21.0)

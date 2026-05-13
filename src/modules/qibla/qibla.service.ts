@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -48,7 +48,7 @@ export async function getQibla(lat: number, lng: number): Promise<QiblaInfo> {
                     latitude: lat,
                     longitude: lng,
                     direction: localQiblaDirection(lat, lng),
-                    apiName: 'aladhan.com',
+                    apiName: 'local',
                 };
             }
         },

@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -22,6 +22,7 @@ interface NawafCategory {
     category: string;
     count: string;
     description: string;
+    content?: string;
     reference?: string;
     zekr: string;
 }
@@ -44,6 +45,7 @@ export const azkarApis: ApiFunction<AzkarCategory>[] = [
                 text: it.zekr,
                 count: parseCount(it.count),
                 description: it.description || undefined,
+                content: it.content || undefined,
                 reference: it.reference || undefined,
             }));
             categories.push({ category: name, items: azkarItems, apiName: 'github.com/nawafalqari' });

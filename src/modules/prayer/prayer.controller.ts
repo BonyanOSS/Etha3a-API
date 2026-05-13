@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */

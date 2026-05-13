@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -16,6 +16,11 @@ export interface PrayerQuery {
     city?: string;
     country?: string;
     method?: number;
+}
+
+function todayDDMMYYYY(): string {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
 }
 
 function buildAlAdhanQuery(q: PrayerQuery): string {
@@ -54,7 +59,7 @@ export function buildApis(q: PrayerQuery): ApiFunction<PrayerTimings>[] {
         });
     }
 
-    if (hasCoords) {
+    if (hasCoords && q.date === todayDDMMYYYY()) {
         apis.push(async () => {
             const url = `https://api.pray.zone/v2/times/today.json?longitude=${q.longitude}&latitude=${q.latitude}`;
             const res = await fetchWithTimeout(url, {}, 10000);

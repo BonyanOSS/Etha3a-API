@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -41,7 +41,7 @@ async function fetchBooksFallback(): Promise<HadithBook[]> {
     const res = await fetchWithTimeout(FALLBACK_BOOKS_URL, {}, 10000);
     if (!res.ok) throw new Error('jsdelivr hadith books failed');
     const json = (await res.json()) as JsdelivrBook[];
-    return json.map((b) => ({ ...b, apiName: 'hadith.gading.dev' as const }));
+    return json.map((b) => ({ ...b, apiName: 'cdn.jsdelivr.net/sutanlab/hadith-api' as const }));
 }
 
 export async function listBooks(): Promise<HadithBook[]> {
@@ -82,7 +82,7 @@ async function fetchBookFromCdn(bookId: string, range: { from: number; to: numbe
     return {
         book: json.name,
         available: json.available,
-        hadiths: sliced.map((h) => ({ number: h.number, text: h.arab, book: json.name, apiName: 'hadith.gading.dev' as const })),
+        hadiths: sliced.map((h) => ({ number: h.number, text: h.arab, book: json.name, apiName: 'cdn.jsdelivr.net/sutanlab/hadith-api' as const })),
     };
 }
 
