@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -55,7 +55,7 @@ export const ayatApis: ApiFunction<SurahWithAyaItem[]>[] = [
                 number: num,
                 name: `سورة ${num}`,
                 ayat,
-                apiName: 'quran.gading.dev' as const,
+                apiName: 'cdn.jsdelivr.net/fawazahmed0/quran-api' as const,
             }));
 
         return [surahs];

@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest an endpoint, source, SDK, or reliability improvement.
+title: 'feat: '
+labels:
+    - enhancement
+body:
+    - type: textarea
+      id: problem
+      attributes:
+          label: Problem
+          description: What user or developer problem does this solve?
+      validations:
+          required: true
+    - type: textarea
+      id: proposal
+      attributes:
+          label: Proposal
+          description: Describe the desired API, source, or behavior.
+      validations:
+          required: true
+    - type: textarea
+      id: notes
+      attributes:
+          label: Notes
+          description: Links, source docs, license information, or examples.

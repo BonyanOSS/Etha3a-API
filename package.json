@@ -1,6 +1,6 @@
 {
-    "name": "etha3a",
-    "version": "1.1.0",
+    "name": "bonyan-api",
+    "version": "2.0.0",
     "description": "API for broadcasting the Quran and Islamic supplications, with automatic fallback between multiple sources and a unified data interface (Quran, Tafsir, Azkar, Hadith, Prayer Times, Hijri Date, Qibla)",
     "main": "dist/server.js",
     "type": "module",
@@ -35,12 +35,7 @@
         "@fastify/cors": "^11.2.0",
         "@fastify/rate-limit": "^10.3.0",
         "dotenv": "^17.3.1",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.5",
-        "eslint-plugin-simple-header": "^1.2.2",
-        "fastify": "^5.7.4",
-        "ts-node": "^10.9.2",
-        "typescript-eslint": "^8.56.1"
+        "fastify": "^5.7.4"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -50,10 +45,15 @@
         "@typescript-eslint/parser": "^8.56.1",
         "@vitest/coverage-v8": "^4.0.18",
         "eslint": ">=10",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-simple-header": "^1.2.2",
         "prettier": "^3.8.1",
         "supertest": "^7.2.2",
+        "ts-node": "^10.9.2",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
+        "typescript-eslint": "^8.56.1",
         "vitest": "^4.0.18"
     }
 }

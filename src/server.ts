@@ -1,5 +1,5 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
@@ -18,10 +18,18 @@ import hadithRoutes from './modules/hadith/hadith.route.js';
 import prayerRoutes from './modules/prayer/prayer.route.js';
 import hijriRoutes from './modules/hijri/hijri.route.js';
 import qiblaRoutes from './modules/qibla/qibla.route.js';
+import { getCacheStats } from './utils/cache.js';
+import { fail } from './utils/http.js';
+import { renderMetrics } from './utils/metrics.js';
 
-const app = Fastify({ logger: true });
+const app = Fastify({
+    logger: {
+        level: process.env.LOG_LEVEL || 'info',
+    },
+    trustProxy: process.env.TRUST_PROXY === 'true',
+});
 
-await app.register(cors, { origin: true });
+await app.register(cors, { origin: parseCorsOrigin(process.env.CORS_ORIGIN) });
 
 await app.register(rateLimit, {
     max: Number(process.env.RATE_LIMIT_MAX) || 120,
@@ -37,7 +45,7 @@ type RouteInfo = {
 const allRoutes: RouteInfo[] = [];
 
 app.addHook('onRoute', (routeOptions) => {
-    if (routeOptions.url === '/' || routeOptions.url === '/health') return;
+    if (['/', '/health', '/ready', '/metrics'].includes(routeOptions.url)) return;
     allRoutes.push({
         method: routeOptions.method,
         url: routeOptions.url,
@@ -46,24 +54,28 @@ app.addHook('onRoute', (routeOptions) => {
 });
 
 app.get('/', async () => ({
-    name: 'Etha3a-API',
+    name: 'Bonyan-API',
     description: 'Quran & Azkar API with multi-source fallback',
     routes: allRoutes,
 }));
 
 app.get('/health', async () => ({ status: 'ok', code: 200, timestamp: new Date().toISOString() }));
+app.get('/ready', async () => ({ status: 'ready', code: 200, timestamp: new Date().toISOString(), cache: getCacheStats() }));
+app.get('/metrics', async (_req, reply) => {
+    return reply.type('text/plain; version=0.0.4').send(renderMetrics(getCacheStats()));
+});
 
 app.setNotFoundHandler((req, reply) => {
-    reply.status(404).send({ success: false, message: `Route ${req.method} ${req.url} not found` });
+    return fail(reply, 404, `Route ${req.method} ${req.url} not found`, 'NOT_FOUND');
 });
 
 app.setErrorHandler((err: Error & { statusCode?: number }, _req, reply) => {
     app.log.error(err);
     const status = err.statusCode ?? 500;
     if (status >= 400 && status < 500) {
-        return reply.status(status).send({ success: false, message: err.message });
+        return fail(reply, status, err.message);
     }
-    return reply.status(500).send({ success: false, message: 'Internal server error' });
+    return fail(reply, 500, 'Internal server error', 'INTERNAL_SERVER_ERROR');
 });
 
 await app.register(recitersRoutes);
@@ -83,3 +95,11 @@ app.listen({ port, host }).catch((err) => {
     app.log.error(err);
     process.exit(1);
 });
+
+function parseCorsOrigin(value: string | undefined): boolean | string[] {
+    if (!value || value.trim() === '*' || value.trim().toLowerCase() === 'true') return true;
+    return value
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+}

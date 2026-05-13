@@ -1,18 +1,18 @@
 /*
- * Etha3a – Quran & Azkar API
+ * Bonyan-API – Quran & Azkar API
  * Copyright (c) 2026 BonyanOSS
  * MIT License
  */
 
 export type SurahApiSource = 'mp3quran.net' | 'alquran.cloud' | 'quran.com';
 export type ReciterApiSource = 'mp3quran.net' | 'quran.com';
-export type AyatApiSource = 'alquran.cloud' | 'quran.gading.dev';
+export type AyatApiSource = 'alquran.cloud' | 'cdn.jsdelivr.net/fawazahmed0/quran-api';
 export type AzkarApiSource = 'hisnmuslim.com' | 'github.com/nawafalqari';
 export type TafsirApiSource = 'alquran.cloud' | 'quranenc.com';
-export type HadithApiSource = 'hadith.gading.dev';
+export type HadithApiSource = 'hadith.gading.dev' | 'cdn.jsdelivr.net/sutanlab/hadith-api';
 export type PrayerApiSource = 'aladhan.com' | 'pray.zone';
 export type HijriApiSource = 'aladhan.com';
-export type QiblaApiSource = 'aladhan.com';
+export type QiblaApiSource = 'aladhan.com' | 'local';
 
 /* ------------------ RecitersItem ------------------ */
 

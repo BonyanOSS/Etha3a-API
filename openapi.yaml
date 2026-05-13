@@ -1,0 +1,508 @@
+openapi: 3.1.0
+info:
+    title: Bonyan-API
+    version: 1.2.0
+    summary: Multi-source fallback REST API for Islamic digital content.
+    license:
+        name: MIT
+        identifier: MIT
+    contact:
+        name: BonyanOSS
+        url: https://github.com/BonyanOSS/Bonyan-API
+servers:
+    - url: http://localhost:3000
+      description: Local development
+tags:
+    - name: Meta
+    - name: Surah
+    - name: Ayat
+    - name: Reciters
+    - name: Tafsir
+    - name: Azkar
+    - name: Hadith
+    - name: Prayer
+    - name: Hijri
+    - name: Qibla
+paths:
+    /:
+        get:
+            tags: [Meta]
+            summary: Route catalogue
+            responses:
+                '200':
+                    description: OK
+    /health:
+        get:
+            tags: [Meta]
+            summary: Liveness probe
+            responses:
+                '200':
+                    description: OK
+    /ready:
+        get:
+            tags: [Meta]
+            summary: Readiness probe with cache stats
+            responses:
+                '200':
+                    description: OK
+    /metrics:
+        get:
+            tags: [Meta]
+            summary: Prometheus metrics
+            responses:
+                '200':
+                    description: Prometheus text metrics
+                    content:
+                        text/plain:
+                            schema:
+                                type: string
+    /surah:
+        get:
+            tags: [Surah]
+            summary: List all surahs
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '503':
+                    $ref: '#/components/responses/Unavailable'
+    /surah/{id}:
+        get:
+            tags: [Surah]
+            summary: Get a surah by id
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      minimum: 1
+                      maximum: 114
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+    /surah/search:
+        get:
+            tags: [Surah]
+            summary: Search surah by name
+            parameters:
+                - name: name
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+    /ayat:
+        get:
+            tags: [Ayat]
+            summary: Get full Quran text
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /ayat/{id}:
+        get:
+            tags: [Ayat]
+            summary: Get aya by absolute number
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      minimum: 1
+                      maximum: 6236
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+    /ayat/{surah}/aya/{id}:
+        get:
+            tags: [Ayat]
+            summary: Get aya by surah and verse number
+            parameters:
+                - $ref: '#/components/parameters/SurahId'
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      minimum: 1
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+    /ayat/search:
+        get:
+            tags: [Ayat]
+            summary: Search Quran text
+            parameters:
+                - name: text
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - $ref: '#/components/parameters/Limit'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /reciters:
+        get:
+            tags: [Reciters]
+            summary: List reciters
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /reciters/{id}:
+        get:
+            tags: [Reciters]
+            summary: Get reciter by id
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+    /reciters/{id}/surah/{surah}:
+        get:
+            tags: [Reciters]
+            summary: Resolve audio URL
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                - $ref: '#/components/parameters/SurahId'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /reciters/search:
+        get:
+            tags: [Reciters]
+            summary: Search reciters by name
+            parameters:
+                - name: name
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /tafsir:
+        get:
+            tags: [Tafsir]
+            summary: List supported tafsir editions
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /tafsir/{edition}/{surah}:
+        get:
+            tags: [Tafsir]
+            summary: Get tafsir for a surah
+            parameters:
+                - $ref: '#/components/parameters/Edition'
+                - $ref: '#/components/parameters/SurahId'
+                - name: aya
+                  in: query
+                  schema:
+                      type: integer
+                      minimum: 1
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /tafsir/{edition}/{surah}/{aya}:
+        get:
+            tags: [Tafsir]
+            summary: Get tafsir for one aya
+            parameters:
+                - $ref: '#/components/parameters/Edition'
+                - $ref: '#/components/parameters/SurahId'
+                - name: aya
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      minimum: 1
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /azkar:
+        get:
+            tags: [Azkar]
+            summary: List azkar categories
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /azkar/random:
+        get:
+            tags: [Azkar]
+            summary: Get random zekr
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /azkar/search:
+        get:
+            tags: [Azkar]
+            summary: Search azkar
+            parameters:
+                - name: text
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - $ref: '#/components/parameters/Limit'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /azkar/{category}:
+        get:
+            tags: [Azkar]
+            summary: Get azkar category
+            parameters:
+                - name: category
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hadith:
+        get:
+            tags: [Hadith]
+            summary: List hadith books
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hadith/random:
+        get:
+            tags: [Hadith]
+            summary: Get random hadith
+            parameters:
+                - name: book
+                  in: query
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hadith/{book}:
+        get:
+            tags: [Hadith]
+            summary: Get hadith range from a book
+            parameters:
+                - name: book
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: from
+                  in: query
+                  schema:
+                      type: integer
+                      minimum: 1
+                - name: to
+                  in: query
+                  schema:
+                      type: integer
+                      minimum: 1
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hadith/{book}/{number}:
+        get:
+            tags: [Hadith]
+            summary: Get one hadith by number
+            parameters:
+                - name: book
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: number
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      minimum: 1
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /prayer/times:
+        get:
+            tags: [Prayer]
+            summary: Get prayer times
+            parameters:
+                - name: date
+                  in: query
+                  schema:
+                      type: string
+                      pattern: "^\\d{2}-\\d{2}-\\d{4}$"
+                - name: latitude
+                  in: query
+                  schema:
+                      type: number
+                - name: longitude
+                  in: query
+                  schema:
+                      type: number
+                - name: city
+                  in: query
+                  schema:
+                      type: string
+                - name: country
+                  in: query
+                  schema:
+                      type: string
+                - name: method
+                  in: query
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hijri/today:
+        get:
+            tags: [Hijri]
+            summary: Get today's Hijri and Gregorian dates
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hijri/from-gregorian:
+        get:
+            tags: [Hijri]
+            summary: Convert Gregorian date to Hijri
+            parameters:
+                - $ref: '#/components/parameters/Date'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /hijri/to-gregorian:
+        get:
+            tags: [Hijri]
+            summary: Convert Hijri date to Gregorian
+            parameters:
+                - $ref: '#/components/parameters/Date'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+    /qibla:
+        get:
+            tags: [Qibla]
+            summary: Get Qibla direction
+            parameters:
+                - name: latitude
+                  in: query
+                  required: true
+                  schema:
+                      type: number
+                      minimum: -90
+                      maximum: 90
+                - name: longitude
+                  in: query
+                  required: true
+                  schema:
+                      type: number
+                      minimum: -180
+                      maximum: 180
+            responses:
+                '200':
+                    $ref: '#/components/responses/Ok'
+components:
+    parameters:
+        Date:
+            name: date
+            in: query
+            required: true
+            schema:
+                type: string
+                pattern: "^\\d{2}-\\d{2}-\\d{4}$"
+        Edition:
+            name: edition
+            in: path
+            required: true
+            schema:
+                type: string
+                enum: [muyassar, jalalayn, saadi, waseet, qurtubi]
+        Limit:
+            name: limit
+            in: query
+            schema:
+                type: integer
+                minimum: 1
+        SurahId:
+            name: surah
+            in: path
+            required: true
+            schema:
+                type: integer
+                minimum: 1
+                maximum: 114
+    responses:
+        Ok:
+            description: OK
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/OkResponse'
+        BadRequest:
+            description: Bad request
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        NotFound:
+            description: Not found
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        Unavailable:
+            description: All sources failed
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+    schemas:
+        OkResponse:
+            type: object
+            required: [success, data]
+            properties:
+                success:
+                    type: boolean
+                    const: true
+                data: {}
+        ErrorResponse:
+            type: object
+            required: [success, message, error]
+            properties:
+                success:
+                    type: boolean
+                    const: false
+                message:
+                    type: string
+                error:
+                    type: object
+                    required: [code, message, requestId]
+                    properties:
+                        code:
+                            type: string
+                        message:
+                            type: string
+                        requestId:
+                            type: string
