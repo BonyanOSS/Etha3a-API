@@ -61,6 +61,7 @@ export interface AzkarItem {
     count?: number;
     reference?: string;
     description?: string;
+    content?: string;
 }
 
 export interface AzkarCategory {
